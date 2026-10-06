@@ -13612,7 +13612,6 @@ var Mu, G, Nu, K = y((() => {
 				return t.length === 0 ? [] : [{
 					key: e.id,
 					label: e.name,
-					count: t.length,
 					accent: e.accent,
 					items: t.map(re)
 				}];
@@ -13634,7 +13633,6 @@ var Mu, G, Nu, K = y((() => {
 				"aria-label": "Documents",
 				groups: v.value,
 				filterable: te.value > 12,
-				"sticky-headings": "",
 				placeholder: "Filter packages…",
 				onKeydown: se(ce(ue, ["prevent"]), ["enter"])
 			}, l({

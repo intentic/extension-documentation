@@ -73,7 +73,7 @@ const visible = computed<NavGroup<NavRow>[]>(() =>
         const packages = matching(section);
         return packages.length === 0
             ? []
-            : [{ key: section.id, label: section.name, count: packages.length, accent: section.accent, items: packages.map(rowOf) }];
+            : [{ key: section.id, label: section.name, accent: section.accent, items: packages.map(rowOf) }];
     }),
 );
 
@@ -111,7 +111,6 @@ watch(
         aria-label="Documents"
         :groups="visible"
         :filterable="total > 12"
-        sticky-headings
         placeholder="Filter packages…"
         @keydown.enter.prevent="openFirst"
     >
