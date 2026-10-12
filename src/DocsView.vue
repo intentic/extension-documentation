@@ -6,6 +6,8 @@ import {
     Button,
     ui,
     Icon,
+    Modal,
+    Notice,
     PageAction,
     ScrollFrame,
     Picker,
@@ -264,10 +266,11 @@ const agentLink = (id: string) => appLink(api.href(`/agents/${id}`), () => api.c
         />
 
         <!-- Confirmation names the file count and flags that anything already staged here rides along with the commit. -->
-        <div v-if="publishState !== undefined" class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
-            <div class="flex w-full max-w-md flex-col gap-3 rounded-xl border border-line bg-overlay p-4">
-                <h2 class="text-sm font-semibold">Publish to {{ label }}</h2>
-                <p class="text-xs text-muted">
+        <Modal :open="publishState !== undefined" size="sm" :header="`Publish to ${label}`" @update:open="!publishing && (publishState = undefined)">
+            <!-- Guarded: the box keeps drawing through its closing fade, after the preflight it describes is gone. -->
+            <div v-if="publishState !== undefined" class="flex flex-col gap-4">
+                <!-- `text-sm` spelled out: a host before the dialog redesign gives the body no reading size of its own. -->
+                <p class="text-sm text-muted">
                     <!-- A package page is written as its own README; only the map lands under `docs/architecture/`. -->
                     {{ publishState.tails.length }} file{{ publishState.tails.length === 1 ? `` : `s` }} will be written, each package's
                     <span class="font-mono">README.md</span> and the map under <span class="font-mono">docs/architecture/</span>, and committed<span
@@ -276,18 +279,15 @@ const agentLink = (id: string) => appLink(api.href(`/agents/${id}`), () => api.c
                         on {{ publishState.branch }}</span
                     >.
                 </p>
-                <p v-if="publishState.foreign.length > 0" class="flex items-start gap-2 rounded-lg bg-warning/10 px-2.5 py-2 text-2xs">
-                    <Icon name="exclamation-triangle" class="mt-0.5 shrink-0 text-warning" />
-                    <span>
-                        This repository has {{ publishState.foreign.length }} other changed file{{ publishState.foreign.length === 1 ? `` : `s` }}.
-                        Any of them you have already staged will be included in this commit.
-                    </span>
-                </p>
-                <div class="flex justify-end gap-2">
-                    <Button size="small" severity="secondary" text label="Cancel" :disabled="publishing" @click="publishState = undefined" />
-                    <Button size="small" :label="publishing ? `Publishing…` : `Publish`" :disabled="publishing" @click="confirmPublish" />
-                </div>
+                <Notice v-if="publishState.foreign.length > 0" tone="warning">
+                    This repository has {{ publishState.foreign.length }} other changed file{{ publishState.foreign.length === 1 ? `` : `s` }}.
+                    Any of them you have already staged will be included in this commit.
+                </Notice>
             </div>
-        </div>
+            <template #footer>
+                <Button severity="secondary" text label="Cancel" :disabled="publishing" @click="publishState = undefined" />
+                <Button :label="publishing ? `Publishing…` : `Publish`" :disabled="publishing" @click="confirmPublish" />
+            </template>
+        </Modal>
     </SplitView>
 </template>

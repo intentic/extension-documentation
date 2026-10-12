@@ -48,7 +48,8 @@ const start = (): void => {
 <template>
     <Modal v-model:open="open" size="md" :header="`Generate documentation for ${label}`">
         <div class="flex flex-col gap-4">
-            <p class="text-xs text-muted">
+            <!-- `text-sm` spelled out: a host before the dialog redesign gives the body no reading size of its own. -->
+            <p class="text-sm text-muted">
                 One agent writes the repository's map first: the components, the vocabulary, the reading order. The packages you pick below are then
                 documented in parallel, one agent each, and land as a draft you review before anything is committed.
             </p>
@@ -60,8 +61,9 @@ const start = (): void => {
                 <span class="ml-auto text-2xs text-subtle">{{ chosen.length }} of {{ packages.length }}</span>
             </div>
 
-<!-- A wash instead of a frame with hairlines between every row: the checkboxes already give the list its structure. -->
-            <div class="max-h-72 overflow-y-auto rounded-lg bg-content/4 p-1">
+            <!-- Rows on the dialog's own ground, no frame or wash: the checkboxes already give the list its structure. Pulled out by
+                 the rows' own padding so the paths line up with the text above. -->
+            <div class="-mx-2.5 max-h-72 overflow-y-auto">
                 <label
                     v-for="dir in packages"
                     :key="dir"
@@ -79,11 +81,12 @@ const start = (): void => {
                 <Icon name="info-circle" class="mt-0.5 shrink-0" />
                 <span>{{ chosen.length }} packages means {{ chosen.length + 1 }} agent sessions, running in parallel.</span>
             </p>
-
-            <div class="flex justify-end gap-2">
-                <Button size="small" severity="secondary" text label="Cancel" @click="open = false" />
-                <AgentRunButton label="Generate" :picker="runModel" :disabled="chosen.length === 0" @run="start" />
-            </div>
         </div>
+
+        <template #footer>
+            <Button severity="secondary" text label="Cancel" @click="open = false" />
+            <!-- AgentRunButton is compact unless told otherwise; any size but `small` is PrimeVue's standard one, Cancel's. -->
+            <AgentRunButton label="Generate" size="normal" :picker="runModel" :disabled="chosen.length === 0" @run="start" />
+        </template>
     </Modal>
 </template>
