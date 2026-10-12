@@ -10,8 +10,8 @@ import {
     Notice,
     PageAction,
     ScrollFrame,
-    Picker,
     type PickerOption,
+    RepoPicker,
     SegmentedControl,
     SplitView,
     useLoadingReveal,
@@ -159,15 +159,8 @@ const agentLink = (id: string) => appLink(api.href(`/agents/${id}`), () => api.c
 <template>
     <SplitView title="Documentation" scroll="page" :scroll-key="`${repo}/${page ?? ``}`" mobile="swap" :detail-open="page !== undefined">
         <template #actions>
-            <Picker
-                v-if="pinned === undefined && repos.length > 1"
-                :model-value="repo"
-                :options="repoOptions"
-                variant="ghost"
-                aria-label="Repository"
-                placeholder="Repository"
-                @update:model-value="(next) => next !== undefined && chooseRepo(next)"
-            />
+            <!-- No "All repositories": a document is always one repository's. Remembering is repoChoice's, not the picker's. -->
+            <RepoPicker v-if="pinned === undefined" :model-value="repo" :repos="repoOptions" @update:model-value="(next) => next !== undefined && chooseRepo(next)" />
             <SegmentedControl v-if="hasStaged" v-model="source" :options="SOURCES" />
             <PageAction icon="sparkles" label="Generate" primary @click="generateOpen = true" />
         </template>

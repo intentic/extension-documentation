@@ -1,6 +1,6 @@
 import { hostSlot as e, sandboxLedger as t, sandboxPoll as n } from "@intentic/extension-api";
 import { Fragment as r, computed as i, createBlock as a, createCommentVNode as o, createElementBlock as s, createElementVNode as c, createSlots as l, createTextVNode as u, createVNode as d, defineComponent as f, mergeModels as p, mergeProps as ee, nextTick as m, normalizeClass as te, openBlock as h, ref as ne, renderList as re, toDisplayString as g, unref as _, useModel as ie, watch as ae, withCtx as v, withKeys as oe, withModifiers as se } from "vue";
-import { AgentRunButton as ce, Button as y, Checkbox as le, Icon as ue, Markdown as de, Modal as fe, NavRail as pe, Notice as me, PageAction as he, Picker as ge, Row as _e, ScrollFrame as ve, SegmentedControl as ye, SplitView as be, StatusBadge as xe, appLink as Se, timeAgo as Ce, ui as we, useAgentRunPick as Te, useLoadingReveal as Ee } from "@intentic/extension-ui";
+import { AgentRunButton as ce, Button as y, Checkbox as le, Icon as ue, Markdown as de, Modal as fe, NavRail as pe, Notice as me, PageAction as he, RepoPicker as ge, Row as _e, ScrollFrame as ve, SegmentedControl as ye, SplitView as be, StatusBadge as xe, appLink as Se, timeAgo as Ce, ui as we, useAgentRunPick as Te, useLoadingReveal as Ee } from "@intentic/extension-ui";
 import { useQuery as De, useQueryClient as Oe } from "@tanstack/vue-query";
 //#region \0rolldown/runtime.js
 var ke = Object.defineProperty, b = (e, t, n) => () => {
@@ -14486,7 +14486,7 @@ var SN, CN, wN, TN = b((() => {
 					} }
 				});
 			}, We = (e) => Se(t.href(`/agents/${e}`), () => t.chat.openAgent(e));
-			return (t, i) => (h(), a(_(be), {
+			return (t, n) => (h(), a(_(be), {
 				title: "Documentation",
 				scroll: "page",
 				"scroll-key": `${m.value}/${oe.value ?? ""}`,
@@ -14494,26 +14494,23 @@ var SN, CN, wN, TN = b((() => {
 				"detail-open": oe.value !== void 0
 			}, {
 				actions: v(() => [
-					e.repo === void 0 && n.value.length > 1 ? (h(), a(_(ge), {
+					e.repo === void 0 ? (h(), a(_(ge), {
 						key: 0,
 						"model-value": m.value,
-						options: l.value,
-						variant: "ghost",
-						"aria-label": "Repository",
-						placeholder: "Repository",
-						"onUpdate:modelValue": i[0] ||= (e) => e !== void 0 && ce(e)
-					}, null, 8, ["model-value", "options"])) : o("", !0),
+						repos: l.value,
+						"onUpdate:modelValue": n[0] ||= (e) => e !== void 0 && ce(e)
+					}, null, 8, ["model-value", "repos"])) : o("", !0),
 					_(xe) ? (h(), a(_(ye), {
 						key: 1,
 						modelValue: le.value,
-						"onUpdate:modelValue": i[1] ||= (e) => le.value = e,
+						"onUpdate:modelValue": n[1] ||= (e) => le.value = e,
 						options: de
 					}, null, 8, ["modelValue"])) : o("", !0),
 					d(_(he), {
 						icon: "sparkles",
 						label: "Generate",
 						primary: "",
-						onClick: i[2] ||= (e) => Be.value = !0
+						onClick: n[2] ||= (e) => Be.value = !0
 					})
 				]),
 				strips: v(() => [ze.value === void 0 ? o("", !0) : (h(), s("div", EN, [
@@ -14525,7 +14522,7 @@ var SN, CN, wN, TN = b((() => {
 					c("span", DN, [
 						u(g(ze.value.mapDone ? "Documenting packages" : "Reading the repository and drawing its map") + " : " + g(ze.value.done), 1),
 						ze.value.total === void 0 ? o("", !0) : (h(), s("span", ON, " of " + g(ze.value.total), 1)),
-						i[10] ||= u(" written ", -1)
+						n[10] ||= u(" written ", -1)
 					]),
 					c("div", kN, [(h(!0), s(r, null, re(ze.value.agents.slice(0, 6), (e) => (h(), a(_(y), ee({
 						key: e.id,
@@ -14538,20 +14535,20 @@ var SN, CN, wN, TN = b((() => {
 						size: "small",
 						severity: "secondary",
 						label: "Stop",
-						onClick: i[3] ||= (e) => _(Ae)(ze.value.manifest.runId)
+						onClick: n[3] ||= (e) => _(Ae)(ze.value.manifest.runId)
 					})])
 				])), le.value === "staged" && _(xe) ? (h(), s("div", AN, [
 					d(_(ue), {
 						name: "file-edit",
 						class: "shrink-0 text-link"
 					}),
-					i[11] ||= c("span", { class: "text-content" }, "This is a draft. Nothing is in the repository until you publish it.", -1),
+					n[11] ||= c("span", { class: "text-content" }, "This is a draft. Nothing is in the repository until you publish it.", -1),
 					c("div", jN, [d(_(y), {
 						size: "small",
 						severity: "secondary",
 						text: "",
 						label: "Discard",
-						onClick: i[4] ||= (e) => _(Pe)(m.value).then(() => le.value = "published")
+						onClick: n[4] ||= (e) => _(Pe)(m.value).then(() => le.value = "published")
 					}), d(_(y), {
 						size: "small",
 						label: `Publish to ${ie.value}`,
@@ -14572,18 +14569,18 @@ var SN, CN, wN, TN = b((() => {
 					key: 0,
 					type: "button",
 					class: te(_(we).textAction("mb-2 shrink-0")),
-					onClick: i[5] ||= (e) => se(void 0)
+					onClick: n[5] ||= (e) => se(void 0)
 				}, [d(_(ue), {
 					name: "arrow-left",
 					class: "text-2xs"
-				}), i[12] ||= u(" Contents ", -1)], 2)) : o("", !0), _(_e) && _(De) ? (h(), a(NM, { key: 1 })) : _(_e) ? (h(), s("div", MN)) : _(pe)?.repoDoc === void 0 && _(pe)?.prose === void 0 ? (h(), s("div", NN, [c("div", { class: te(_(we).emptyState()) }, [
+				}), n[12] ||= u(" Contents ", -1)], 2)) : o("", !0), _(_e) && _(De) ? (h(), a(NM, { key: 1 })) : _(_e) ? (h(), s("div", MN)) : _(pe)?.repoDoc === void 0 && _(pe)?.prose === void 0 ? (h(), s("div", NN, [c("div", { class: te(_(we).emptyState()) }, [
 					c("p", PN, g(ie.value) + " has no documentation yet.", 1),
-					i[13] ||= c("p", { class: "mt-1 text-xs text-muted" }, " One agent will map the repository: its components, its vocabulary, what to read first, and then a further agent documents each package. You review the result before anything is committed. ", -1),
+					n[13] ||= c("p", { class: "mt-1 text-xs text-muted" }, " One agent will map the repository: its components, its vocabulary, what to read first, and then a further agent documents each package. You review the result before anything is committed. ", -1),
 					d(_(y), {
 						size: "small",
 						label: "Generate documentation",
 						class: "mt-3",
-						onClick: i[6] ||= (e) => Be.value = !0
+						onClick: n[6] ||= (e) => Be.value = !0
 					})
 				], 2)])) : (h(), a(_(ve), {
 					key: oe.value ?? "overview",
@@ -14620,7 +14617,7 @@ var SN, CN, wN, TN = b((() => {
 				}))]),
 				default: v(() => [d(eN, {
 					modelValue: Be.value,
-					"onUpdate:modelValue": i[7] ||= (e) => Be.value = e,
+					"onUpdate:modelValue": n[7] ||= (e) => Be.value = e,
 					label: ie.value,
 					packages: [...Re.value.map((e) => e.dir), ...Le.value?.undocumented ?? []].sort(),
 					index: Le.value,
@@ -14634,14 +14631,14 @@ var SN, CN, wN, TN = b((() => {
 					open: x.value !== void 0,
 					size: "sm",
 					header: `Publish to ${ie.value}`,
-					"onUpdate:open": i[9] ||= (e) => !S.value && (x.value = void 0)
+					"onUpdate:open": n[9] ||= (e) => !S.value && (x.value = void 0)
 				}, {
 					footer: v(() => [d(_(y), {
 						severity: "secondary",
 						text: "",
 						label: "Cancel",
 						disabled: S.value,
-						onClick: i[8] ||= (e) => x.value = void 0
+						onClick: n[8] ||= (e) => x.value = void 0
 					}, null, 8, ["disabled"]), d(_(y), {
 						label: S.value ? "Publishing…" : "Publish",
 						disabled: S.value,
@@ -14649,12 +14646,12 @@ var SN, CN, wN, TN = b((() => {
 					}, null, 8, ["label", "disabled"])]),
 					default: v(() => [x.value === void 0 ? o("", !0) : (h(), s("div", FN, [c("p", IN, [
 						u(g(x.value.tails.length) + " file" + g(x.value.tails.length === 1 ? "" : "s") + " will be written, each package's ", 1),
-						i[14] ||= c("span", { class: "font-mono" }, "README.md", -1),
-						i[15] ||= u(" and the map under ", -1),
-						i[16] ||= c("span", { class: "font-mono" }, "docs/architecture/", -1),
-						i[17] ||= u(", and committed", -1),
+						n[14] ||= c("span", { class: "font-mono" }, "README.md", -1),
+						n[15] ||= u(" and the map under ", -1),
+						n[16] ||= c("span", { class: "font-mono" }, "docs/architecture/", -1),
+						n[17] ||= u(", and committed", -1),
 						x.value.branch === "" ? o("", !0) : (h(), s("span", LN, " on " + g(x.value.branch), 1)),
-						i[18] ||= u(". ", -1)
+						n[18] ||= u(". ", -1)
 					]), x.value.foreign.length > 0 ? (h(), a(_(me), {
 						key: 0,
 						tone: "warning"
