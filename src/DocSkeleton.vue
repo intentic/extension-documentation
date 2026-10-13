@@ -1,4 +1,5 @@
-<!-- Loading placeholder for a document page, shared by DocTab and DocsView. -->
+<!-- Loading placeholder for a document page, shared by DocTab and DocsView: the first-visit fallback inside each one's
+     <SkeletonSnapshot>, which draws the page as it last looked once it has been seen. -->
 <script setup lang="ts">
 /* Widths as a fixed uneven set walked in order: prose wraps unevenly and a placeholder that reshuffles on every re-render is an animation nobody asked for. */
 const PARAGRAPHS = [

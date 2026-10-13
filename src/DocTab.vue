@@ -1,6 +1,6 @@
 <!-- One directory's documentation page opened in a Workspace tab beside its code. -->
 <script setup lang="ts">
-import { appLink, Button, ui, Icon, SegmentedControl, useLoadingReveal } from "@intentic/extension-ui";
+import { appLink, Button, ui, Icon, SegmentedControl, SkeletonSnapshot, useLoadingReveal, vSkeletonSource } from "@intentic/extension-ui";
 import { computed, ref, watch } from "vue";
 import DocPage from "./DocPage.vue";
 import DocSkeleton from "./DocSkeleton.vue";
@@ -33,12 +33,14 @@ const SOURCES = [
 ];
 
 const { set, isLoading, hasStaged, usePackage } = useDocs(repo, source);
+const packageQuery = usePackage(dir);
+// The page's own read joins the set's: until it lands, the tab would offer to document a directory that already is.
+const loading = computed(() => isLoading.value || packageQuery.isLoading.value);
 // Keyed on the directory, so switching directories starts a fresh wait instead of the last page's outline.
 const outline = useLoadingReveal(
-    isLoading,
+    loading,
     computed(() => `${repo.value}:${dir.value ?? ``}`),
 );
-const packageQuery = usePackage(dir);
 
 // Flips to staged only when a page exists solely as a draft; published remains the default otherwise.
 watch([hasStaged, set, packageQuery.data], ([staged, repoSet, page]) => {
@@ -70,12 +72,17 @@ const areaLink = computed(() => {
             </div>
         </div>
 
-        <DocSkeleton v-if="isLoading && outline" />
-        <div v-else-if="isLoading" class="min-h-0 flex-1" />
+        <!-- This directory's page as it last looked in a tab, and the shared prose outline before it has been seen. Its own
+             name, not the Documentation area's: the tab's pane and the area's framed card are different boxes. -->
+        <SkeletonSnapshot v-if="loading && outline" :of="`documentation.tab:${path}`" label="Reading the documentation…">
+            <DocSkeleton />
+        </SkeletonSnapshot>
+        <div v-else-if="loading" class="min-h-0 flex-1" />
 
         <!-- An invitation, not an error, since undocumented is ordinary; it links to generation, not a scope choice. -->
         <div
             v-else-if="dir === undefined ? set?.prose === undefined : packageQuery.data.value === undefined"
+            v-skeleton-source="`documentation.tab:${path}`"
             class="min-h-0 flex-1 overflow-y-auto p-6"
         >
             <div :class="ui.emptyState()">
@@ -86,7 +93,7 @@ const areaLink = computed(() => {
         </div>
 
         <!-- No card here: this div IS the pane, so it matches the file-preview treatment, a centered measure with `ui-softscroll`. -->
-        <div v-else class="ui-softscroll min-h-0 flex-1 overflow-y-auto bg-canvas px-6 py-5">
+        <div v-else v-skeleton-source="`documentation.tab:${path}`" class="ui-softscroll min-h-0 flex-1 overflow-y-auto bg-canvas px-6 py-5">
             <DocPage
                 v-if="dir === undefined"
                 key="overview"

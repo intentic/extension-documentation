@@ -13,8 +13,11 @@ import {
     type PickerOption,
     RepoPicker,
     SegmentedControl,
+    SkeletonRows,
+    SkeletonSnapshot,
     SplitView,
     useLoadingReveal,
+    vSkeletonSource,
 } from "@intentic/extension-ui";
 import { computed, ref, watch } from "vue";
 import { acknowledgeStaged } from "./attention.js";
@@ -25,6 +28,7 @@ import DocSkeleton from "./DocSkeleton.vue";
 import { packageFigures } from "./figures.js";
 import GenerateDialog from "./GenerateDialog.vue";
 import { host } from "./host.js";
+import { underRepo } from "./paths.js";
 import { openingRepo, rememberRepo, rememberedRepo } from "./repoChoice.js";
 import { useDocs, type DocSource } from "./useDocs.js";
 import { usePublish, type Preflight } from "./usePublish.js";
@@ -78,8 +82,15 @@ const SOURCES = [
 ];
 
 const { set, isLoading, hasStaged, usePackage, refresh } = useDocs(repo, source);
-// Drawn only once the wait has earned it, keyed on the repository being read.
-const outline = useLoadingReveal(isLoading, repo);
+const packageQuery = usePackage(page);
+// A package page is read on open, after the set: until it lands the page would claim it has no prose, so its read is
+// part of the wait too.
+const loading = computed(() => isLoading.value || packageQuery.isLoading.value);
+// The open document, workspace-root-relative: what its remembered outline is kept under, so each page waits in its own
+// shape rather than the last one read.
+const docPath = computed(() => (page.value === undefined ? repo.value : underRepo(repo.value, page.value)));
+// Drawn only once the wait has earned it, keyed on the document being read.
+const outline = useLoadingReveal(loading, docPath);
 const { rows, start, advance, stop } = useRuns(repo);
 const { preflight, publish, discard } = usePublish();
 
@@ -102,8 +113,6 @@ watch([source, repo, hasStaged], ([which, at, staged]) => {
         void acknowledgeStaged(at);
     }
 });
-
-const packageQuery = usePackage(page);
 
 const index = computed(() => set.value?.index);
 const entries = computed(() => index.value?.entries ?? []);
@@ -201,7 +210,22 @@ const agentLink = (id: string) => appLink(api.href(`/agents/${id}`), () => api.c
 
         <!-- Coverage, filtering and grouping live in `<DocsNav>`; this view just tracks which page is open. -->
         <template #rail>
-            <DocsNav :components="set?.repoDoc?.components ?? []" :index="index" :page="page" @open="openPage" />
+            <!-- The contents arrive with the set, so they wait with it: an empty index would read "No package pages here
+                 yet". This repository's contents as they last looked, the pinned Overview row and a section before that. -->
+            <template v-if="isLoading">
+                <SkeletonSnapshot v-if="outline" :of="`documentation.nav:${repo}`" label="Reading the contents…">
+                    <div class="flex min-h-0 flex-1 flex-col" role="status" aria-busy="true">
+                        <span class="sr-only">Reading the contents…</span>
+                        <div class="pb-2"><SkeletonRows :rows="1" density="dense" /></div>
+                        <span class="skeleton mb-1 ml-2 block h-2.5 w-20" aria-hidden="true" />
+                        <div class="flex flex-col gap-0.5"><SkeletonRows :rows="5" density="dense" :lead="false" /></div>
+                    </div>
+                </SkeletonSnapshot>
+            </template>
+            <!-- A box of its own, so the imprint is the whole column; flex-1 keeps the rail's height chain for its scroller. -->
+            <div v-else v-skeleton-source="`documentation.nav:${repo}`" class="flex min-h-0 flex-1 flex-col">
+                <DocsNav :components="set?.repoDoc?.components ?? []" :index="index" :page="page" @open="openPage" />
+            </div>
         </template>
 
         <!-- Shown only in the compact `swap` layout, where opening a page replaces the contents list and this is the only way back. -->
@@ -211,12 +235,16 @@ const agentLink = (id: string) => appLink(api.href(`/agents/${id}`), () => api.c
                 Contents
             </button>
 
-            <DocSkeleton v-if="isLoading && outline" />
+            <!-- This document as it last looked here (a page varies too much for one outline to fit them all), and the
+                 shared prose outline until it has been seen once. -->
+            <SkeletonSnapshot v-if="loading && outline" :of="`documentation.page:${docPath}`" label="Reading the documentation…">
+                <DocSkeleton />
+            </SkeletonSnapshot>
             <!-- `min-h-figure`, not `flex-1`: there is no clamped parent to share, so `flex-1` would resolve to zero. -->
-            <div v-else-if="isLoading" class="min-h-figure" />
+            <div v-else-if="loading" class="min-h-figure" />
 
             <!-- An invitation, not an error: no documents yet is the ordinary starting point, generated from here. -->
-            <div v-else-if="set?.repoDoc === undefined && set?.prose === undefined">
+            <div v-else-if="set?.repoDoc === undefined && set?.prose === undefined" v-skeleton-source="`documentation.page:${docPath}`">
                 <div :class="ui.emptyState()">
                     <p class="text-sm">{{ label }} has no documentation yet.</p>
                     <p class="mt-1 text-xs text-muted">
@@ -227,27 +255,30 @@ const agentLink = (id: string) => appLink(api.href(`/agents/${id}`), () => api.c
                 </div>
             </div>
 
-            <!-- The frame lives here, not in `<DocPage>`, since a Workspace tab wants no box. -->
-            <ScrollFrame v-else :key="page ?? `overview`" :scroll="false">
-                <DocPage
-                    v-if="page === undefined"
-                    class="px-6 py-5"
-                    :prose="set?.prose"
-                    :anchors="[]"
-                    :provenance="set?.repoDoc?.provenance"
-                    :repo="repo"
-                    :staleness="undefined"
-                />
-                <DocPage
-                    v-else
-                    class="px-6 py-5"
-                    :prose="packageQuery.data.value"
-                    :figures="packageFigures(page, index, set?.repoDoc)"
-                    :anchors="entries.find((entry) => entry.dir === page)?.anchors ?? []"
-                    :repo="repo"
-                    :staleness="entries.find((entry) => entry.dir === page)"
-                />
-            </ScrollFrame>
+            <!-- The frame lives here, not in `<DocPage>`, since a Workspace tab wants no box. The box around it stays put
+                 across pages, so the imprint has an element of its own, not a component's root. -->
+            <div v-else v-skeleton-source="`documentation.page:${docPath}`">
+                <ScrollFrame :key="page ?? `overview`" :scroll="false">
+                    <DocPage
+                        v-if="page === undefined"
+                        class="px-6 py-5"
+                        :prose="set?.prose"
+                        :anchors="[]"
+                        :provenance="set?.repoDoc?.provenance"
+                        :repo="repo"
+                        :staleness="undefined"
+                    />
+                    <DocPage
+                        v-else
+                        class="px-6 py-5"
+                        :prose="packageQuery.data.value"
+                        :figures="packageFigures(page, index, set?.repoDoc)"
+                        :anchors="entries.find((entry) => entry.dir === page)?.anchors ?? []"
+                        :repo="repo"
+                        :staleness="entries.find((entry) => entry.dir === page)"
+                    />
+                </ScrollFrame>
+            </div>
         </template>
 
         <GenerateDialog
