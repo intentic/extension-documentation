@@ -9,7 +9,6 @@ import {
     Modal,
     Notice,
     PageAction,
-    ScrollFrame,
     type PickerOption,
     RepoPicker,
     SegmentedControl,
@@ -255,29 +254,26 @@ const agentLink = (id: string) => appLink(api.href(`/agents/${id}`), () => api.c
                 </div>
             </div>
 
-            <!-- The frame lives here, not in `<DocPage>`, since a Workspace tab wants no box. The box around it stays put
-                 across pages, so the imprint has an element of its own, not a component's root. -->
+            <!-- The box around it stays put across pages, so the imprint has an element of its own, not a component's root. -->
             <div v-else v-skeleton-source="`documentation.page:${docPath}`">
-                <ScrollFrame :key="page ?? `overview`" :scroll="false">
-                    <DocPage
-                        v-if="page === undefined"
-                        class="px-6 py-5"
-                        :prose="set?.prose"
-                        :anchors="[]"
-                        :provenance="set?.repoDoc?.provenance"
-                        :repo="repo"
-                        :staleness="undefined"
-                    />
-                    <DocPage
-                        v-else
-                        class="px-6 py-5"
-                        :prose="packageQuery.data.value"
-                        :figures="packageFigures(page, index, set?.repoDoc)"
-                        :anchors="entries.find((entry) => entry.dir === page)?.anchors ?? []"
-                        :repo="repo"
-                        :staleness="entries.find((entry) => entry.dir === page)"
-                    />
-                </ScrollFrame>
+                <DocPage
+                    v-if="page === undefined"
+                    key="overview"
+                    :prose="set?.prose"
+                    :anchors="[]"
+                    :provenance="set?.repoDoc?.provenance"
+                    :repo="repo"
+                    :staleness="undefined"
+                />
+                <DocPage
+                    v-else
+                    :key="page"
+                    :prose="packageQuery.data.value"
+                    :figures="packageFigures(page, index, set?.repoDoc)"
+                    :anchors="entries.find((entry) => entry.dir === page)?.anchors ?? []"
+                    :repo="repo"
+                    :staleness="entries.find((entry) => entry.dir === page)"
+                />
             </div>
         </template>
 
