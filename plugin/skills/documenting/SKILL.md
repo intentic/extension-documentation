@@ -97,8 +97,8 @@ common spine and a good default, but a package with a genuinely different story 
 Write for a capable engineer who has never opened this repository and has twenty minutes. They want to know what
 is here, how the pieces relate, and where to start.
 
-- **Not an API reference.** No lists of exports, signatures or options: `iq outline <path>` gives those for
-  free, and repeating them produces a page that is long, stale within a week, and unread.
+- **Not an API reference.** No lists of exports, signatures or options: the source already has them, and
+  repeating them produces a page that is long, stale within a week, and unread.
 - **Plain language.** Short sentences. Expand an acronym the first time. Prefer the plain word.
 - **Say what is surprising, and why.** That sentence is usually the most valuable one on the page.
 - **Give reasons where they exist**, and where you cannot find one, describe what the code does rather than

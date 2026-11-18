@@ -11,7 +11,7 @@ const AUDIENCE = [
     ``,
     `A capable engineer who has never opened this repository and has twenty minutes. They want to know what is ` +
         `here, how the pieces relate, and where to start. They do NOT want an API reference: signatures, exported ` +
-        `names and option lists are already one \`iq outline\` away, and repeating them is the fastest way to make ` +
+        `names and option lists are already in the source, and repeating them is the fastest way to make ` +
         `a document that is long, stale within a week, and unread.`,
     ``,
     `Write in plain language. Prefer a short sentence to a precise-sounding one. Expand an acronym the first ` +
@@ -137,8 +137,9 @@ export const mapBrief = (input: MapBriefInput): string => {
         ``,
         `It gives you every package in the repository, the dependency edges between them, each one's size and ` +
             `whether it has tests. That is your ground truth for structure, so do not restate it from reading, and do ` +
-            `not contradict it. Read source only to understand what things are FOR: \`iq map\`, \`iq outline\` and the ` +
-            `repo's own README/ARCHITECTURE files will take you further per token than opening files.`,
+            `not contradict it. Read source only to understand what things are FOR: the repo's own ` +
+            `README/ARCHITECTURE files and the comments at the top of each package's entry point will take you ` +
+            `further per token than reading code line by line.`,
         ``,
         `## What to decide`,
         ``,
@@ -233,7 +234,8 @@ export const packageBrief = (input: PackageBriefInput): string => {
             `packages it depends on and which depend on it. Those edges are what tells you whether this is a leaf ` +
             `everything uses or an entry point that uses everything. Do not restate numbers from reading; take them ` +
             `from here.`,
-        `Then read enough to know what it is FOR. \`iq outline ${dir}\` is worth more per token than opening files. ` +
+        `Then read enough to know what it is FOR. List it with \`rg --files ${dir}\` and read its package.json and ` +
+            `entry point before opening anything else. ` +
             `Long comments at the top of a file are usually the author explaining the design. Read those before the ` +
             `code under them. If the package already has a README, you are REVISING it, not replacing it: keep what ` +
             `is still true and fix what is not.`,
