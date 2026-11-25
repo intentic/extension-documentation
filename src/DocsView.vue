@@ -179,7 +179,7 @@ const agentLink = (id: string) => appLink(api.href(`/agents/${id}`), () => api.c
                 <Icon name="spinner" spin class="shrink-0 text-link" />
                 <span class="text-content">
                     {{ activeRun.mapDone ? `Documenting packages` : `Reading the repository and drawing its map` }}
-                    : {{ activeRun.done }}<span v-if="activeRun.total !== undefined"> of {{ activeRun.total }}</span> written
+                    : {{ activeRun.done }}<template v-if="activeRun.total !== undefined"> of {{ activeRun.total }}</template> written
                 </span>
                 <div class="ml-auto flex items-center gap-1">
                     <Button
@@ -243,15 +243,17 @@ const agentLink = (id: string) => appLink(api.href(`/agents/${id}`), () => api.c
             <div v-else-if="loading" class="min-h-figure" />
 
             <!-- An invitation, not an error: no documents yet is the ordinary starting point, generated from here. -->
-            <div v-else-if="set?.repoDoc === undefined && set?.prose === undefined" v-skeleton-source="`documentation.page:${docPath}`">
-                <div :class="ui.emptyState()">
-                    <p class="text-sm">{{ label }} has no documentation yet.</p>
-                    <p class="mt-1 text-xs text-muted">
-                        One agent will map the repository: its components, its vocabulary, what to read first, and then a further agent documents each
-                        package. You review the result before anything is committed.
-                    </p>
-                    <Button size="small" label="Generate documentation" class="mt-3" @click="generateOpen = true" />
-                </div>
+            <div
+                v-else-if="set?.repoDoc === undefined && set?.prose === undefined"
+                v-skeleton-source="`documentation.page:${docPath}`"
+                :class="ui.emptyState()"
+            >
+                <p class="text-sm">{{ label }} has no documentation yet.</p>
+                <p class="mt-1 text-xs text-muted">
+                    One agent will map the repository: its components, its vocabulary, what to read first, and then a further agent documents each
+                    package. You review the result before anything is committed.
+                </p>
+                <Button size="small" label="Generate documentation" class="mt-3" @click="generateOpen = true" />
             </div>
 
             <!-- The box around it stays put across pages, so the imprint has an element of its own, not a component's root. -->
@@ -293,10 +295,10 @@ const agentLink = (id: string) => appLink(api.href(`/agents/${id}`), () => api.c
                 <p class="text-sm text-muted">
                     <!-- A package page is written as its own README; only the map lands under `docs/architecture/`. -->
                     {{ publishState.tails.length }} file{{ publishState.tails.length === 1 ? `` : `s` }} will be written, each package's
-                    <span class="font-mono">README.md</span> and the map under <span class="font-mono">docs/architecture/</span>, and committed<span
+                    <span class="font-mono">README.md</span> and the map under <span class="font-mono">docs/architecture/</span>, and committed<template
                         v-if="publishState.branch !== ``"
                     >
-                        on {{ publishState.branch }}</span
+                        on {{ publishState.branch }}</template
                     >.
                 </p>
                 <Notice v-if="publishState.foreign.length > 0" tone="warning">
