@@ -26,6 +26,9 @@
         ]
     },
     "contributes": {
+        "modelRoles": [
+            { "id": "documentation-run", "label": "Documentation runs", "explanation": "A pass over a repo's own documentation.", "icon": "book", "setup": "medium" }
+        ],
         "views": [
             {
                 "id": "documentation",

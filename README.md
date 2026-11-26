@@ -79,6 +79,10 @@ not already there.
 2. **Fan-out**: one isolated agent per package, each handed *its* component and the shared glossary inline, each
    writing exactly one file: that package's README. A package that already has one is revised, not replaced.
 
+Every agent of a generation runs as the **Documentation runs** job the manifest declares (`contributes.modelRoles`,
+`documentation-run`, suggested Medium), which the owner puts on a model setup in Sandbox ▸ Agent ▸ Models; the
+sandbox's own table held it until 2026-11-26, under the same id.
+
 Advancing between the phases is **idempotent and derived**: a package's agent starts only when there is neither a
 fleet entry for its (derived) conversation id nor a staged page for it. Closing the browser mid-run does not
 orphan it, and nothing is ever started twice.
