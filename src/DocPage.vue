@@ -57,7 +57,7 @@ const rev = computed((): string => provenance?.sourceRev ?? staleness?.readmeRev
                 <Icon name="file" class="mt-0.5 shrink-0 text-subtle" />
                 <span class="flex min-w-0 flex-col">
                     <span class="truncate font-mono text-xs text-link"
-                        >{{ anchor.path }}<span v-if="anchor.line !== undefined">:{{ anchor.line }}</span></span
+                        >{{ anchor.path }}<template v-if="anchor.line !== undefined">:{{ anchor.line }}</template></span
                     >
                     <span class="text-2xs text-muted">{{ anchor.what }}</span>
                 </span>

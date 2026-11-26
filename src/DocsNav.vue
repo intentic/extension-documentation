@@ -162,7 +162,7 @@ watch(
         <template v-if="index !== undefined" #footer>
             <div class="flex flex-col gap-0.5 text-2xs text-subtle">
                 <span
-                    >{{ entries.length }} documented<span v-if="index.undocumented.length > 0"> · {{ index.undocumented.length }} not yet</span></span
+                    >{{ entries.length }} documented<template v-if="index.undocumented.length > 0"> · {{ index.undocumented.length }} not yet</template></span
                 >
                 <!-- Doubles as the legend for the dots up the column; same amber ties the mark to its explanation. -->
                 <span v-if="staleCount > 0" class="flex items-center gap-1.5">

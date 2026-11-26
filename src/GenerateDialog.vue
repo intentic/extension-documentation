@@ -79,7 +79,7 @@ const start = (): void => {
             <!-- Show the session cost before the user starts the run. -->
             <p v-if="chosen.length > 8" class="flex items-start gap-2 text-2xs text-muted">
                 <Icon name="info-circle" class="mt-0.5 shrink-0" />
-                <span>{{ chosen.length }} packages means {{ chosen.length + 1 }} agent sessions, running in parallel.</span>
+                {{ chosen.length }} packages means {{ chosen.length + 1 }} agent sessions, running in parallel.
             </p>
         </div>
 
